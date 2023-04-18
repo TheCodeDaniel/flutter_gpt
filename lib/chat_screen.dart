@@ -17,6 +17,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool isTyping = false;
 
+  bool isEmpty = true;
+
+  bool chatHasError = false;
+
   final openAI = OpenAI.instance.build(
     token: dotenv.env['API_TOKEN'],
     baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
@@ -30,6 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       _messages.insert(0, _message);
       isTyping = true;
+      chatHasError = false;
     });
 
     final request = CompleteText(
@@ -44,9 +49,14 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         _messages.insert(0, _botMessage);
         isTyping = false;
+        chatHasError = false;
       });
       print(response);
     }).onError((error, stackTrace) {
+      setState(() {
+        chatHasError = true;
+        isTyping = false;
+      });
       print("$error");
     });
     _controller.clear();
@@ -59,15 +69,25 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  isEmpty = value.isNotEmpty;
+                });
+                if (RegExp(r'\s').matchAsPrefix(value) != null) {
+                  setState(() {
+                    isEmpty = false;
+                  });
+                }
+              },
               autocorrect: true,
               controller: _controller,
               decoration: const InputDecoration.collapsed(
-                hintText: "Say something .... ",
+                hintText: "Type something .... ",
               ),
             ),
           ),
           IconButton(
-            onPressed: () => _sendMessage(),
+            onPressed: isEmpty ? () => _sendMessage() : null,
             icon: const Icon(Icons.send),
           )
         ],
@@ -81,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (BuildContext context) {
         return const AlertDialog(
           title: Text("About"),
-          content: Text("Credit to 'OpenAI' for all of API used"),
+          content: Text("Credit to 'OpenAI' for all API used"),
         );
       },
     );
@@ -90,7 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(246, 248, 254, 1),
+      backgroundColor: const Color.fromARGB(255, 234, 239, 255),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
@@ -116,24 +136,42 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Column(
             children: [
               Flexible(
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: const EdgeInsets.only(
-                          top: 10, bottom: 10, left: 0, right: 0),
-                      child: _messages[index],
-                    );
+                child: NotificationListener<OverscrollIndicatorNotification>(
+                  onNotification: (notification) {
+                    notification.disallowIndicator();
+                    return true;
                   },
+                  child: ListView.builder(
+                    reverse: true,
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 10, left: 0, right: 0),
+                        child: _messages[index],
+                      );
+                    },
+                  ),
                 ),
               ),
               if (isTyping)
                 const Center(
-                    child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(color: Colors.black),
-                )),
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(color: Colors.black),
+                  ),
+                ),
+              // return error message if chatbot has an error
+              if (chatHasError == true)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(0),
+                    child: Text(
+                      "an error occurred",
+                      style: TextStyle(color: Color.fromARGB(255, 245, 82, 70)),
+                    ),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(

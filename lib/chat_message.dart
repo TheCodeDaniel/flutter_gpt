@@ -29,13 +29,14 @@ class ChatMessage extends StatelessWidget {
                   sender,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: 17,
                   ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
                   child: Text(
                     text.trim(),
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                   ),
                 )
               ],
@@ -72,13 +73,14 @@ class ChatMessage extends StatelessWidget {
                   sender,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: 17,
                   ),
                 ),
                 Container(
                   margin: const EdgeInsets.only(top: 5.0),
                   child: Text(
                     text,
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                   ),
                 )
               ],
