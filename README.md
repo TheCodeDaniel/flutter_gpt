@@ -4,7 +4,9 @@ Using Chat GPT on a flutter app.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+## Big appreciation to @iampawan for his package "Flutter-ChatGPT"
+
+Here is the url to "@iampawan" package "https://github.com/iampawan/Flutter-ChatGPT.git".
 
 A few resources to get you started if this is your first Flutter project:
 
