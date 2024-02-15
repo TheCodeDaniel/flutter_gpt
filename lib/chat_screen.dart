@@ -22,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool chatHasError = false;
 
   final openAI = OpenAI.instance.build(
-    token: "YOUR_API_KEY", 
+    token: "YOUR_API_KEY",
     baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
     isLogger: true,
   );
