@@ -18,7 +18,7 @@ Future<void> main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.top]);
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
   await Future.delayed(const Duration(seconds: 3));
   runApp(const MyApp());
 }
